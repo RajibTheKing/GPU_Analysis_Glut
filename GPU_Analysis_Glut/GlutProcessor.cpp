@@ -1,5 +1,5 @@
 #include "GlutProcessor.h"
-
+#include "Utils.h"
 
 const GLfloat light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -15,6 +15,8 @@ int GlutProcessor::m_iHeight;
 int GlutProcessor::m_iWidth;
 int GlutProcessor::m_iSlices;
 int GlutProcessor::m_iStacks;
+long long GlutProcessor::displayCounter;
+long long GlutProcessor::prevTime;
 
 GlutProcessor::GlutProcessor(int &argc, string sWindowName, int iWidth, int iHeight)
 {
@@ -25,7 +27,6 @@ GlutProcessor::GlutProcessor(int &argc, string sWindowName, int iWidth, int iHei
 
 	displayCounter = 0;
 	prevTime = -1;
-	a = 3.1416, b = 6.02, c = 9.98, d;
 
 
 	glutInit(&argc, NULL);
@@ -62,7 +63,7 @@ GlutProcessor::GlutProcessor(int &argc, string sWindowName, int iWidth, int iHei
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 
-	const char *gpuVersion = (char *)glGetString(GL_VERSION);
+	const char *gpuVersion = (char *)glGetString(GL_RENDERER);
 	printf("TheKing--> %s\n", gpuVersion);
 	glutMainLoop();
 
@@ -74,6 +75,7 @@ GlutProcessor::~GlutProcessor()
 {
 
 }
+
 
 void GlutProcessor::resize(int width, int height)
 {
@@ -90,6 +92,40 @@ void GlutProcessor::resize(int width, int height)
 
 void GlutProcessor::CustomizedMethod(void)
 {
+	if (prevTime == -1)
+	{
+		prevTime = Utils::CurrentTimeStamp();
+	}
+	else
+	{
+		printf("TheKing--> TimeGap = %lld\n", Utils::CurrentTimeStamp() - prevTime);
+		prevTime = Utils::CurrentTimeStamp();
+
+		long long startTime = Utils::CurrentTimeStamp();
+		double a = 3.1416, b = 2.15, c = 45.65, d = 56.78, e, sum;
+		double results[352 * 288];
+
+		for (int i = 0; i < 352; i++)
+		{
+			a = a + i;
+			for (int j = 0; j < 288; j++)
+			{
+				sum = 0;
+				for (int m = 0; m < 10; m++)
+				{
+					for (int n = 0; n < 10; n++)
+					{
+						sum += (a*b + c) / d;
+					}
+				}
+				//results.push_back(sum);
+				results[i * 288 + j] = sum;
+			}
+		}
+		printf("TheKing--> ProcessingTime = %lld\n", Utils::CurrentTimeStamp() - startTime);
+
+
+	}
 	const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 	const double a = t*90.0;
 
@@ -116,12 +152,15 @@ void GlutProcessor::key(unsigned char key, int x, int y)
 		break;
 
 	case '+':
-		m_iSlices++;
-		m_iStacks++;
+		if (m_iSlices < 100 && m_iStacks < 100)
+		{
+			m_iSlices++;
+			m_iStacks++;
+		}
 		break;
 
 	case '-':
-		if (m_iSlices>3 && m_iSlices>3)
+		if (m_iSlices>3 && m_iStacks>3)
 		{
 			m_iSlices--;
 			m_iStacks--;

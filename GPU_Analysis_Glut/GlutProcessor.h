@@ -1,6 +1,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <chrono>
 #include <windows.h>
 #include <string>
 using namespace std;
@@ -15,14 +16,16 @@ public:
 	static void CustomizedMethod();
 	static void key(unsigned char key, int x, int y);
 	static void idle();
+	
 
 	static int m_iHeight;
 	static int m_iWidth;
 	static int m_iStacks;
 	static int m_iSlices;
 
-	long long displayCounter;
-	long long prevTime;
-	double a , b , c, d;
+	static long long displayCounter;
+	static long long prevTime;
+	static double aa , bb , cc, dd, sumsum;
+	
 
 };
